@@ -1,0 +1,175 @@
+{
+  "name": "My workflow 5",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "Response",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "b3b930b2-3d46-4da0-8094-5664758a3fcb",
+      "name": "Webhook",
+      "webhookId": "99e542ed-b1fb-4c92-afaa-2520a9180ab8"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={\n  \"email_thread\": \"Subject: Re: Q3 Marketing Strategy\\nFrom: Sarah Jacobs <sarah.j@example.com>\\nTo: Marketing Team <marketing@example.com>\\nDate: Mon, Jul 8, 2025, 9:15 AM\\n\\nHi team,\\n\\nThanks for the draft strategy. I reviewed the Q3 plan and have a few suggestions:\\n\\n- Add LinkedIn ads to the digital campaign.\\n- Budget needs to be finalized by Thursday.\\n- Let's include customer testimonials in the newsletter.\\n\\nCan we meet tomorrow at 2 PM to finalize?\\n\\nBest,\\nSarah\\n\\n---\\n\\nFrom: Michael Smith <michael.s@example.com>\\nTo: Sarah Jacobs <sarah.j@example.com>\\nDate: Sun, Jul 7, 2025, 4:40 PM\\n\\nHi Sarah,\\n\\nPlease find attached the draft marketing strategy for Q3. Let me know your thoughts. I think we’re in a good place with social media, but open to changes.\\n\\nRegards,\\nMichael\"\n}\n",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        220,
+        0
+      ],
+      "id": "140b3280-fab9-4df0-965a-9967bbdad6e3",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        240,
+        220
+      ],
+      "id": "63d598a1-8085-4b95-ae88-da3431a27a82",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "AFLRIBZSmHNtcfuP",
+          "name": "Google Gemini(PaLM) Api account 4"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1,
+      "position": [
+        500,
+        240
+      ],
+      "id": "b8fb3967-b24d-428b-ba33-e89594c09fa4",
+      "name": "Think"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Webhook').item.json.body }}",
+        "contextWindowLength": 20
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        380,
+        240
+      ],
+      "id": "a146034b-659b-4202-b6d5-86208709fc16",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "sendTo": "nav77318@gmail.com",
+        "subject": "={{ $json.output }}",
+        "emailType": "text",
+        "message": "mail",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        580,
+        0
+      ],
+      "id": "a80809c6-debf-4544-901c-a90794186cf7",
+      "name": "Send a message",
+      "webhookId": "b31cfb3f-3853-4fe8-9d9e-f1260a432139",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "J63TdTedQgdzqzYN",
+          "name": "Gmail account 3"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Think": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "b5899ebd-beca-4d3a-b3a2-33fdb2d0bd97",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "4e866215954e36fed1828ba566d46178a5f7142e5c8b7a9b2cf076303feb8d2f"
+  },
+  "id": "oR3pZtqsmBtffrSE",
+  "tags": []
+}
